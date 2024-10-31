@@ -73,9 +73,6 @@
         #submitted-details {
             margin-top: 20px;
         }
-        #medicine-image {
-            margin-top: 20px;
-        }
         .error-message {
             color: red;
             margin-top: 10px;
@@ -148,7 +145,6 @@
             <p id="order-summary" class="detail"></p>
             <p id="bill" class="detail"></p>
             <p id="customer-details" class="detail"></p>
-            <img id="medicine-image" src="images/medicine.jpg" alt="Medicine">
         </div>
     </div>
 
@@ -169,7 +165,7 @@
             }
         }
 
-        function submitOrder() {
+        async function submitOrder() {
             const medicineItems = document.querySelectorAll('.medicine-item');
             const name = document.getElementById('name').value.trim();
             const address = document.getElementById('address').value.trim();
@@ -192,25 +188,45 @@
                 const quantity = parseInt(item.querySelector('.quantity').value);
 
                 if (quantity > 0) {
-                    const itemTotal = quantity * 65;
+                    const itemTotal = quantity * 65; // Assuming each item costs Rs 65
                     totalBill += itemTotal;
                     orderSummary += `${quantity} ${medicineName}(s) - Rs ${itemTotal}<br>`;
                 }
             });
 
-            displayOrderDetails(orderSummary, totalBill, name, address, phone);
+            if (totalBill === 0) {
+                errorMessage.textContent = 'Please select at least one medicine.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            // Sending order details to the server
+            const response = await fetch('/submit_order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    address: address,
+                    phone: phone,
+                    order_summary: orderSummary,
+                    total_bill: totalBill
+                }),
+            });
+
+            const data = await response.json();
+            displayOrderDetails(data.message);
         }
 
-        function displayOrderDetails(summary, bill, name, address, phone) {
+        function displayOrderDetails(message) {
             document.querySelectorAll('.medicine-item').forEach(item => item.classList.add('hidden'));
             document.querySelectorAll('label').forEach(label => label.classList.add('hidden'));
             document.querySelectorAll('input').forEach(input => input.classList.add('hidden'));
             document.querySelector('.btn-submit').classList.add('hidden');
 
             document.getElementById('submitted-details').classList.remove('hidden');
-            document.getElementById('order-summary').innerHTML = summary;
-            document.getElementById('bill').innerHTML = `Total Bill: Rs ${bill}`;
-            document.getElementById('customer-details').innerHTML = `Name: ${name}<br>Address: ${address}<br>Phone No: ${phone}`;
+            document.getElementById('order-summary').innerHTML = message;
         }
     </script>
 
