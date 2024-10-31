@@ -22,24 +22,11 @@ def submit_order():
     order_summary = data['order_summary']
     total_bill = data['total_bill']
 
-    # Print the submitted details to the console
-    print(f"Received Order Details:")
-    print(f"Name: {name}")
-    print(f"Address: {address}")        # Updated to match the input field
-    print(f"Phone: {phone}")            # Updated to match the input field
-    print(f"Order Summary: {order_summary}")
-    print(f"Total Bill: Rs {total_bill}")
+    # Prepare the message for response
+    message = f"Order received from {name} at {address}, Phone: {phone}.<br>" \
+              f"Order Summary:<br>{order_summary}Total Bill: Rs {total_bill}."
 
-    # Response message to be sent back to the client
-    response_message = (
-        f"Order Summary:<br>{order_summary}<br>"
-        f"Total Bill: Rs {total_bill}<br>"
-        f"Customer Name: {name}<br>"
-        f"Address: {address}<br>"         # Updated to match the input field
-        f"Phone No: {phone}"              # Updated to match the input field
-    )
-
-    return jsonify({"message": response_message})
+    return jsonify({'message': message})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000, debug=True)
+    app.run(host='0.0.0.0', port=5000)  # Run the server on all interfaces, port 5000
