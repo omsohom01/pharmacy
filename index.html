@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Ordering System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url('images/background.jpg'); /* Set background image */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            color: #333; /* Contrast text for readability */
+        }
+        .main-content {
+            width: 90%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.8); /* Add a slight overlay for readability */
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .medicine-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            width: 100%;
+            justify-content: space-between;
+        }
+        .medicine-item img {
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+        }
+        .medicine-name {
+            font-weight: bold;
+        }
+        .quantity-container {
+            display: flex;
+            align-items: center;
+        }
+        .quantity {
+            width: 40px;
+            text-align: center;
+            background-color: white;
+            color: darkgreen;
+            border: 2px solid darkgreen;
+            border-radius: 5px;
+            margin: 0 5px;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 10px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        .btn-increment, .btn-decrement {
+            background-color: darkgreen;
+        }
+        .btn-submit {
+            background-color: green;
+        }
+        .hidden {
+            display: none;
+        }
+        #submitted-details {
+            margin-top: 20px;
+        }
+        #medicine-image {
+            margin-top: 20px;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+        .detail {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-content">
+        <h2>Medicine Ordering System</h2>
+
+        <!-- Input fields for customer details -->
+        <label for="name">Name:</label>
+        <input type="text" id="name"><br><br>
+        
+        <label for="address">Address:</label>
+        <input type="text" id="address"><br><br>
+        
+        <label for="phone">Phone No:</label>
+        <input type="text" id="phone"><br><br>
+
+        <div class="medicine-item" data-medicine="Pan D">
+            <img src="images/pandy.jpg" alt="Pan D">
+            <span class="medicine-name">Pan D</span>
+            <div class="quantity-container">
+                <button class="btn btn-decrement" onclick="decreaseQuantity(this)">-</button>
+                <input type="text" class="quantity" value="0" readonly>
+                <button class="btn btn-increment" onclick="increaseQuantity(this)">+</button>
+            </div>
+        </div>
+
+        <div class="medicine-item" data-medicine="Phazyme">
+            <img src="images/Phazyme.jpg" alt="Phazyme">
+            <span class="medicine-name">Phazyme</span>
+            <div class="quantity-container">
+                <button class="btn btn-decrement" onclick="decreaseQuantity(this)">-</button>
+                <input type="text" class="quantity" value="0" readonly>
+                <button class="btn btn-increment" onclick="increaseQuantity(this)">+</button>
+            </div>
+        </div>
+
+        <div class="medicine-item" data-medicine="Paracetamol">
+            <img src="images/Paracetamol.jpg" alt="Paracetamol">
+            <span class="medicine-name">Paracetamol</span>
+            <div class="quantity-container">
+                <button class="btn btn-decrement" onclick="decreaseQuantity(this)">-</button>
+                <input type="text" class="quantity" value="0" readonly>
+                <button class="btn btn-increment" onclick="increaseQuantity(this)">+</button>
+            </div>
+        </div>
+
+        <div class="medicine-item" data-medicine="Thyroxine">
+            <img src="images/Medicine.jpg" alt="Thyroxine">
+            <span class="medicine-name">Thyroxine</span>
+            <div class="quantity-container">
+                <button class="btn btn-decrement" onclick="decreaseQuantity(this)">-</button>
+                <input type="text" class="quantity" value="0" readonly>
+                <button class="btn btn-increment" onclick="increaseQuantity(this)">+</button>
+            </div>
+        </div>
+
+        <button class="btn btn-submit" onclick="submitOrder()">Submit Order</button>
+        <p id="error-message" class="error-message hidden"></p>
+
+        <div id="submitted-details" class="hidden">
+            <h2>Order Details</h2>
+            <p id="order-summary" class="detail"></p>
+            <p id="bill" class="detail"></p>
+            <p id="customer-details" class="detail"></p>
+            <img id="medicine-image" src="images/medicine.jpg" alt="Medicine">
+        </div>
+    </div>
+
+    <script>
+        function increaseQuantity(button) {
+            const quantityInput = button.previousElementSibling;
+            let quantity = parseInt(quantityInput.value);
+            quantity += 1;
+            quantityInput.value = quantity;
+        }
+
+        function decreaseQuantity(button) {
+            const quantityInput = button.nextElementSibling;
+            let quantity = parseInt(quantityInput.value);
+            if (quantity > 0) {
+                quantity -= 1;
+                quantityInput.value = quantity;
+            }
+        }
+
+        function submitOrder() {
+            const medicineItems = document.querySelectorAll('.medicine-item');
+            const name = document.getElementById('name').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const errorMessage = document.getElementById('error-message');
+
+            errorMessage.classList.add('hidden');
+
+            if (!name || !address || !phone) {
+                errorMessage.textContent = 'Please fill in all fields.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            let orderSummary = '';
+            let totalBill = 0;
+
+            medicineItems.forEach(item => {
+                const medicineName = item.getAttribute('data-medicine');
+                const quantity = parseInt(item.querySelector('.quantity').value);
+
+                if (quantity > 0) {
+                    const itemTotal = quantity * 65;
+                    totalBill += itemTotal;
+                    orderSummary += ${quantity} ${medicineName}(s) - Rs ${itemTotal}<br>;
+                }
+            });
+
+            displayOrderDetails(orderSummary, totalBill, name, address, phone);
+        }
+
+        function displayOrderDetails(summary, bill, name, address, phone) {
+            document.querySelectorAll('.medicine-item').forEach(item => item.classList.add('hidden'));
+            document.querySelectorAll('label').forEach(label => label.classList.add('hidden'));
+            document.querySelectorAll('input').forEach(input => input.classList.add('hidden'));
+            document.querySelector('.btn-submit').classList.add('hidden');
+
+            document.getElementById('submitted-details').classList.remove('hidden');
+            document.getElementById('order-summary').innerHTML = summary;
+            document.getElementById('bill').innerHTML = Total Bill: Rs ${bill};
+            document.getElementById('customer-details').innerHTML = Name: ${name}<br>Address: ${address}<br>Phone No: ${phone};
+        }
+    </script>
+
+</body>
+</html>
