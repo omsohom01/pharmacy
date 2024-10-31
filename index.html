@@ -194,7 +194,7 @@
                 if (quantity > 0) {
                     const itemTotal = quantity * 65;
                     totalBill += itemTotal;
-                    orderSummary += ${quantity} ${medicineName}(s) - Rs ${itemTotal}<br>;
+                    orderSummary += `${quantity} ${medicineName}(s) - Rs ${itemTotal}<br>`;
                 }
             });
 
@@ -209,8 +209,8 @@
 
             document.getElementById('submitted-details').classList.remove('hidden');
             document.getElementById('order-summary').innerHTML = summary;
-            document.getElementById('bill').innerHTML = Total Bill: Rs ${bill};
-            document.getElementById('customer-details').innerHTML = Name: ${name}<br>Address: ${address}<br>Phone No: ${phone};
+            document.getElementById('bill').innerHTML = `Total Bill: Rs ${bill}`;
+            document.getElementById('customer-details').innerHTML = `Name: ${name}<br>Address: ${address}<br>Phone No: ${phone}`;
         }
     </script>
 
